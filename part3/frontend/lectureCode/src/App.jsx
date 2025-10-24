@@ -37,13 +37,13 @@ const App = () => {
 
     const toggleImportanceOf = (id) => {
         console.log("Importance of ", id, " must be toggled");
-        const url = `/api/notes/${id}`;
+        // const url = `${id}`;
         // const url = `http://localhost:3001/notes/${id}`;
         const note = notes.find((item) => item.id === id);
         const changedNote = { ...note, important: !note.important };
 
         noteService
-            .update(url, changedNote)
+            .update(id, changedNote)
             .then((returnedNote) => {
                 _setNotes(
                     notes.map((note) =>
