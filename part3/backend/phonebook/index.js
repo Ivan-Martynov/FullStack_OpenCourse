@@ -3,6 +3,9 @@ const morgan = require("morgan");
 
 const app = express();
 
+// Show static content.
+app.use(express.static("dist"));
+
 // Activate the json parser.
 app.use(express.json());
 
