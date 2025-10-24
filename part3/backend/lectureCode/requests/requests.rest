@@ -1,0 +1,14 @@
+### Get all nodes.
+GET http://localhost:3001/api/notes
+
+### Deleting a note.
+DELETE http://localhost:3001/api/notes/2
+
+### Adding a note.
+POST http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+    "content": "Using VS code REST extension to add a note.",
+    "important": true
+}
