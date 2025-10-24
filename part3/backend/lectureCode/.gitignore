@@ -1,0 +1,2 @@
+# Allow dist to be syncronized.
+!dist/
