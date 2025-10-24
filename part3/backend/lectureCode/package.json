@@ -8,6 +8,7 @@
         "dev": "node --watch index.js",
         "build": "rm -rf dist/ && cd ../../frontend/lectureCode/ && npm run build && cp -r dist ../../backend/lectureCode/",
         "deploy": "git add . && git commit -m deploying && git push origin main",
+        "deploy-full": "npm run build && npm run deploy",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Ivan Martynov",
