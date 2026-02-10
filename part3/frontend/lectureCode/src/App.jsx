@@ -47,7 +47,7 @@ const App = () => {
             .then((returnedNote) => {
                 _setNotes(
                     notes.map((note) =>
-                        note.id === id ? returnedNote.data : note
+                        note.id === id ? returnedNote : note
                     )
                 );
             })

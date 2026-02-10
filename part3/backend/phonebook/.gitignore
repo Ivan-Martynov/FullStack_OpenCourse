@@ -1,2 +1,4 @@
-# Allow dist to be syncronized.
+node_modules
+.env
+
 !dist/

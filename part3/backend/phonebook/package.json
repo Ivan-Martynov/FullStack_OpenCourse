@@ -6,15 +6,15 @@
     "scripts": {
         "start": "node index.js",
         "dev": "node --watch index.js",
-        "build": "rm -rf dist/ && cd ../../frontend/phonebook/ && npm run build && cp -r dist ../../backend/phonebook/",
-        "deploy": "git add . && git commit -m deploying && git push origin main",
-        "deploy-full": "npm run build && npm run deploy",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Ivan Martynov",
     "license": "MIT",
     "dependencies": {
+        "cors": "^2.8.6",
+        "dotenv": "^17.2.4",
         "express": "^5.1.0",
+        "mongoose": "^9.1.6",
         "morgan": "^1.10.1"
     }
 }

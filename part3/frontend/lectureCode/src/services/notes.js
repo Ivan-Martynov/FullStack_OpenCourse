@@ -9,6 +9,8 @@ const getAll = async () => {
         content: "This note is not saved to server",
         important: true,
     };
+    // request.data.concat(nonExisting);
+    // return request.data;
     return request.then((response) => response.data.concat(nonExisting));
     // return request.then((response) => response.data);
 };

@@ -6,14 +6,21 @@
     "scripts": {
         "start": "node index.js",
         "dev": "node --watch index.js",
-        "build": "rm -rf dist/ && cd ../../frontend/lectureCode/ && npm run build && cp -r dist ../../backend/lectureCode/",
-        "deploy": "git add . && git commit -m deploying && git push origin main",
-        "deploy-full": "npm run build && npm run deploy",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "lint": "eslint ."
     },
     "author": "Ivan Martynov",
     "license": "MIT",
     "dependencies": {
-        "express": "^5.1.0"
+        "cors": "^2.8.5",
+        "dotenv": "^17.2.4",
+        "express": "^5.1.0",
+        "mongoose": "^9.1.3"
+    },
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "@stylistic/eslint-plugin": "^5.8.0",
+        "eslint": "^10.0.0",
+        "globals": "^17.3.0"
     }
 }

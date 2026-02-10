@@ -9,7 +9,7 @@ const PersonForm = ({ persons, setPersons, inform }) => {
         if (
             !window.confirm(
                 `${person.name} is already added to the phonebook, replace ` +
-                    `the old number with a new one?`
+                `the old number with a new one?`
             )
         ) {
             return;
@@ -51,11 +51,16 @@ const PersonForm = ({ persons, setPersons, inform }) => {
                 setPersons(persons.concat(returnedPerson));
                 _setNewName("");
                 _setNewNumber("");
-            });
-            inform({
-                message: `Added ${name}`,
-                messageClass: "notification-success",
-            });
+                inform({
+                    message: `Added ${name}`,
+                    messageClass: "notification-success",
+                });
+            }).catch(error => {
+                inform({
+                    message: error.response.data.error,
+                    messageClass: "notification-failure"
+                })
+            })
         }
     };
 
