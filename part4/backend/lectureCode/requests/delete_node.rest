@@ -1,0 +1,3 @@
+### Deleting a note.
+DELETE http://localhost:3001/api/notes/6989fec28bb67f211ea7729c
+
