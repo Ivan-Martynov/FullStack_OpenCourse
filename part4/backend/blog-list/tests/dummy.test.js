@@ -6,4 +6,3 @@ test('dummy return one always', () => {
   const result = listHelper.dummy([])
   assert.strictEqual(result, 1)
 })
-

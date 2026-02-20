@@ -1,0 +1,20 @@
+### Login root.
+
+POST http://localhost:3001/api/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "root",
+  "password": "salainen"
+}
+
+### Login user.
+
+POST http://localhost:3001/api/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "mluukkai",
+  "password": "sekret"
+}
+

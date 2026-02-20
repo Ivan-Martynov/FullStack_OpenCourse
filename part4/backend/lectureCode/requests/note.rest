@@ -1,0 +1,24 @@
+### Get all nodes.
+
+GET http://localhost:3001/api/notes HTTP/1.1
+
+
+
+### Deleting a note.
+
+DELETE http://localhost:3001/api/notes/2 HTTP/1.1
+
+
+
+### Adding a note.
+
+POST http://localhost:3001/api/notes HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2OTk0MjAyMmY2Y2Y1NWIxZjRiNDk5ZGUiLCJpYXQiOjE3NzEzMjQzNzJ9.r1LVRPbqilgid-tEe_Iwj72sUof7Z7PN8lf-dDKLiHU
+Content-Type: application/json
+
+{
+  "content": "Adding a note while authorized.",
+  "userId": "69941e676da3ddee6a67a5a2",
+  "important": true
+}
+

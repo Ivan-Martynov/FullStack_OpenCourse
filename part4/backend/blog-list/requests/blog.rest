@@ -1,0 +1,39 @@
+### Get all blogs.
+
+GET http://localhost:3003/api/blogs HTTP/1.1
+
+
+
+### Deleting a blog.
+
+DELETE http://localhost:3003/api/blogs/6995932cd8104e29368021b5 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvaG4iLCJpZCI6IjY5OTQ1YzYzZWY4ZjcyMDVhYTUzMzhkMiIsImlhdCI6MTc3MTQxMDUzNiwiZXhwIjoxNzcxNDE0MTM2fQ.rQWwsX-TGBW6z1wBQ1Z_ubMaP8Al5VAAJFMMea6UfaY
+
+
+
+### Adding a blog.
+
+POST http://localhost:3003/api/blogs HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvaG4iLCJpZCI6IjY5OTQ1YzYzZWY4ZjcyMDVhYTUzMzhkMiIsImlhdCI6MTc3MTQwOTM0MiwiZXhwIjoxNzcxNDEyOTQyfQ.59Azgx3zPrr5N2gsalh48_jtZa_2dz0j2hscmsAxt8
+Content-Type: application/json
+
+{
+  "title": "Try adding another blog",
+  "author": "John Doe",
+  "url": "linkhere",
+  "likes": 1,
+  "userId": "69945c63ef8f7205aa5338d2"
+}
+
+### Updating a blog.
+
+PUT http://localhost:3003/api/blogs/69958fd76c103d16d90c46a2 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvaG4iLCJpZCI6IjY5OTQ1YzYzZWY4ZjcyMDVhYTUzMzhkMiIsImlhdCI6MTc3MTQxMTcwOSwiZXhwIjoxNzcxNDE1MzA5fQ.uuHrRCGis8UbQu-TURoYc9VcuXAMCMYDsEvHBb5Ekao
+Content-Type: application/json
+
+{
+  "title": "Rename this blog",
+  "likes": 2,
+  "userId": "69945c63ef8f7205aa5338d2"
+}
+
