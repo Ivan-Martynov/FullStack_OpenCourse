@@ -1,15 +1,13 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
-import loginService from './services/login'
+import Togglable from './components/Togglable'
+import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-
-  const [newBlogTitle, setNewBlogTitle] = useState('')
-  const [newBlogAuthor, setNewBlogAuthor] = useState('')
-  const [newBlogUrl, setNewBlogUrl] = useState('')
 
   const [notificationTimer, setNotificationTimer] = useState(null)
   const [notification, setNotification] = useState({
@@ -17,116 +15,64 @@ const App = () => {
     messageClass: 'notification-failure' | 'notification-success',
   })
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
   const loggedUserKey = 'loggedBlogAppUser'
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
+    const fetchData = async () => {
+      const blogsData = await blogService.getAll()
+      setBlogs(blogsData)
+    }
+    fetchData()
   }, [])
 
-  // let notificationTimer = null
-  const inform = useCallback(
-    ({ message, messageClass }) => {
-      window.clearTimeout(notificationTimer)
-      // console.log('calling inform', message, messageClass)
+  const inform = ({ message, messageClass }) => {
+    window.clearTimeout(notificationTimer)
 
-      setNotification({ message, messageClass })
-      setNotificationTimer(
-        window.setTimeout(() => {
-          setNotification({ message: '', messageClass: '' })
-        }, 5000),
-      )
-    },
-    [notificationTimer],
-  )
+    setNotification({ message, messageClass })
+    setNotificationTimer(
+      window.setTimeout(() => {
+        setNotification({ message: '', messageClass: '' })
+      }, 5000),
+    )
+  }
 
-  const handleLogout = useCallback(() => {
+  const handleLogout = () => {
     inform({
-      message: `You've logged out`,
+      message: 'You"ve logged out',
       messageClass: 'notification-success',
     })
     window.localStorage.removeItem(loggedUserKey)
     setUser(null)
-  }, [inform])
+  }
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem(loggedUserKey)
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      if (blogService.isTokenExpired(user.token)) {
+      const loggedUser = JSON.parse(loggedUserJSON)
+      if (blogService.isTokenExpired(loggedUser.token)) {
         handleLogout()
       } else {
-        setUser(user)
-        blogService.setToken(user.token)
+        setUser(loggedUser)
+        blogService.setToken(loggedUser.token)
       }
     }
-  }, [handleLogout])
-
-  const handleLogin = async (event) => {
-    event.preventDefault()
-
-    try {
-      const user = await loginService.login({ username, password })
-
-      window.localStorage.setItem(loggedUserKey, JSON.stringify(user))
-      blogService.setToken(user.token)
-
-      setUser(user)
-      setUsername('')
-      setPassword('')
-
-      inform({
-        message: `You've logged in as ${user.name}`,
-        messageClass: 'notification-success',
-      })
-    } catch {
-      inform({
-        message: 'wrong username or password',
-        messageClass: 'notification-failure',
-      })
-    }
-  }
+  }, [])
 
   const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        <label>
-          username
-          <input
-            type="text"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          password
-          <input
-            type="password"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </label>
-      </div>
-      <button type="submit">login</button>
-    </form>
+    <Togglable buttonLabel="login">
+      <LoginForm setUser={setUser} inform={inform} />
+    </Togglable>
   )
 
-  const addBlog = async (event) => {
-    event.preventDefault()
+  const blogFormRef = useRef()
 
-    const blogObject = {
-      title: newBlogTitle,
-      author: newBlogAuthor,
-      url: newBlogUrl,
-    }
-
+  const addBlog = async (blogObject) => {
     try {
+      blogFormRef.current.toggleVisibility()
       const returnedBlog = await blogService.create(blogObject)
+      // console.log(`returnedBlog: ${returnedBlog?.user} `)
       setBlogs(blogs.concat(returnedBlog))
 
       inform({
@@ -137,41 +83,60 @@ const App = () => {
       const message = error.response?.data?.error || error.message
       inform({ message, messageClass: 'notification-failure' })
     }
+  }
 
-    setNewBlogTitle('')
-    setNewBlogAuthor('')
-    setNewBlogUrl('')
+  const updateBlog = async (updatedBlog) => {
+    try {
+      const returnedBlog = await blogService.update(updatedBlog.id, updatedBlog)
+      // if (userCreatedBlog(updatedBlog)) {
+      //   returnedBlog.removeBlog = updatedBlog.removeBlog
+      // }
+      setBlogs(
+        blogs.map((item) =>
+          item.id === returnedBlog.id ? returnedBlog : item,
+        ),
+      )
+      inform({
+        message: `Blog "${returnedBlog.title}" updated`,
+        messageClass: 'notification-success',
+      })
+    } catch (error) {
+      const message = error.response?.data?.error || error.message
+      inform({ message, messageClass: 'notification-failure' })
+      setBlogs(blogs.filter((item) => item.id !== updatedBlog.id))
+    }
+  }
+
+  const removeBlog = async (blog) => {
+    try {
+      await blogService.remove(blog.id)
+      setBlogs(blogs.filter((item) => item.id !== blog.id))
+      inform({
+        message: `Blog "${blog.title}" removed`,
+        messageClass: 'notification-success',
+      })
+    } catch (error) {
+      const message = error.response?.data?.error || error.message
+      inform({ message, messageClass: 'notification-failure' })
+    }
   }
 
   const blogForm = () => (
-    <form onSubmit={addBlog}>
-      <div>
-        <label htmlFor="blog-title">title:</label>
-        <input
-          value={newBlogTitle}
-          name="blog-title"
-          onChange={(event) => setNewBlogTitle(event.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="blog-author">author:</label>
-        <input
-          value={newBlogAuthor}
-          name="blog-author"
-          onChange={(event) => setNewBlogAuthor(event.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="blog-url">url:</label>
-        <input
-          value={newBlogUrl}
-          name="blog-url"
-          onChange={(event) => setNewBlogUrl(event.target.value)}
-        />
-      </div>
-      <button type="submit">create</button>
-    </form>
+    <Togglable buttonLabel="new blog" ref={blogFormRef}>
+      <BlogForm createBlog={addBlog} />
+    </Togglable>
   )
+
+  const userCreatedBlog = (blog) => {
+    const loggedUserJSON = window.localStorage.getItem(loggedUserKey)
+    if (loggedUserJSON) {
+      const payload = JSON.parse(atob(loggedUserJSON.split('.')[1]))
+      // console.log(`payload: ${JSON.stringify(payload)}`)
+      // console.log(`blog: ${JSON.stringify(blog)}`)
+      return blog?.user?.id == payload?.id
+    }
+    return false
+  }
 
   return (
     <div>
@@ -182,12 +147,7 @@ const App = () => {
         />
       </div>
 
-      {!user && (
-        <div>
-          <h2>Login</h2>
-          {loginForm()}
-        </div>
-      )}
+      {!user && loginForm()}
       {user && (
         <div>
           <p>
@@ -201,9 +161,16 @@ const App = () => {
       )}
 
       <h2>blogs</h2>
-      {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
-      ))}
+      {blogs
+        .sort((a, b) => b.likes - a.likes)
+        .map((blog) => (
+          <Blog
+            key={blog.id}
+            blog={blog}
+            updateBlog={updateBlog}
+            removeBlog={removeBlog}
+          />
+        ))}
     </div>
   )
 }

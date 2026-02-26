@@ -7,6 +7,10 @@ const setToken = (sourceToken) => {
   token = `Bearer ${sourceToken}`
 }
 
+const getPayload = (targetToken) => {
+  return JSON.parse(atob(targetToken.split('.')[1]))
+}
+
 const isTokenExpired = (targetToken) => {
   if (!targetToken) {
     return true
@@ -47,4 +51,23 @@ const update = async (id, newObject) => {
   return response.data
 }
 
-export default { getAll, create, update, setToken, isTokenExpired }
+const remove = async (id) => {
+  const config = {
+    headers: {
+      Authorization: token,
+    },
+  }
+
+  const response = axios.delete(`${baseUrl}/${id}`, config)
+  return response.data
+}
+
+export default {
+  getAll,
+  create,
+  update,
+  remove,
+  setToken,
+  isTokenExpired,
+  getPayload,
+}
