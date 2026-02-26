@@ -73,7 +73,7 @@ blogsRouter.put('/:id', userExtractor, async (request, response) => {
   if (!blog.user || !user || blog.user.toString() !== user.id.toString()) {
     return response
       .status(403)
-      .json({ error: 'Invalid user to delete the blog' })
+      .json({ error: 'Invalid user to update the blog' })
   }
 
   const updatedBlog = await blog.save()
