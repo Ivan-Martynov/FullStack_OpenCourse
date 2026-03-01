@@ -1,0 +1,59 @@
+# Line length that Prettier tries to wrap at
+printWidth = 80
+
+# Number of spaces per indentation level
+tabWidth = 2
+
+# Use tabs instead of spaces
+useTabs = false
+
+# Add a semicolon at the end of every statement
+semi = true
+
+# Use single quotes instead of double quotes
+singleQuote = false
+
+# Use single quotes in JSX
+jsxSingleQuote = false
+
+# Trailing commas wherever valid in ES5 (objects, arrays, etc.)
+# "all" | "none" | "es5"
+trailingComma = "all"
+
+# Print spaces between brackets in object literals: { foo: bar }
+bracketSpacing = true
+
+# Put the > of a multi-line HTML element at the end of the last line
+bracketSameLine = false
+
+# Include parentheses around a sole arrow function parameter
+# "always" -> (x) => x  |  "avoid" -> x => x
+arrowParens = "always"
+
+# Require a @prettier or @format pragma comment to format a file
+requirePragma = false
+
+# Insert a @format pragma at the top of formatted files
+insertPragma = false
+
+# How to wrap prose (markdown, etc.)
+# "always" | "never" | "preserve"
+proseWrap = "preserve"
+
+# How to handle whitespace in HTML
+# "css" | "strict" | "ignore"
+htmlWhitespaceSensitivity = "css"
+
+# Whether to indent the code inside <script> and <style> tags in Vue files
+vueIndentScriptAndStyle = false
+
+# Line ending style
+# "lf" | "crlf" | "cr" | "auto"
+endOfLine = "lf"
+
+# Control how Prettier formats quoted code embedded in the file
+# "auto" | "off"
+embeddedLanguageFormatting = "auto"
+
+# Enforce single attribute per line in HTML, Vue, and JSX
+singleAttributePerLine = false
