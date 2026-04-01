@@ -1,35 +1,69 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createNote, getNotes, updateNote } from "./requests";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const queryClient = useQueryClient();
+
+  const newNoteMutation = useMutation({
+    mutationFn: createNote,
+    onSuccess: (newNote) => {
+      const notes = queryClient.getQueryData(["notes"]);
+      queryClient.setQueryData(["notes"], notes.concat(newNote));
+    },
+  });
+
+  const updateNoteMutation = useMutation({
+    mutationFn: updateNote,
+    onSuccess: (updatedNote) => {
+      const notes = queryClient.getQueryData(["notes"]);
+      queryClient.setQueryData(
+        ["notes"],
+        notes.map((item) => (item.id === updatedNote.id ? updatedNote : item)),
+      );
+    },
+  });
+
+  const addNote = async (event) => {
+    event.preventDefault();
+    const content = event.target.note.value;
+    event.target.note.value = "";
+    console.log(content);
+    newNoteMutation.mutate({ content, important: true });
+  };
+
+  const toggleImportance = (note) => {
+    updateNoteMutation.mutate({ ...note, important: !note.important });
+  };
+
+  const result = useQuery({
+    queryKey: ["notes"],
+    queryFn: getNotes,
+    refetchOnWindowFocus: false,
+  });
+
+  console.log(JSON.parse(JSON.stringify(result)));
+
+  if (result.isLoading) {
+    return <div>Loading data...</div>;
+  }
+
+  const notes = result.data;
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div>
+      <h2>Notes app</h2>
+      <form onSubmit={addNote}>
+        <input name="note" />
+        <button type="submit">add</button>
+      </form>
+      {notes.map((note) => (
+        <li key={note.id} onClick={() => toggleImportance(note)}>
+          {note.content}
+          <strong> {note.important ? "important" : ""}</strong>
+        </li>
+      ))}
+    </div>
+  );
+};
 
-export default App
+export default App;

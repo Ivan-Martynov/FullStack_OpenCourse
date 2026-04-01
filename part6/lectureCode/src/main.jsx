@@ -1,42 +1,24 @@
-import ReactDOM from "react-dom/client";
-import { createStore } from "redux";
+// import ReactDOM from "react-dom/client";
+// import { Provider } from "react-redux";
+//
+// import App from "./App";
+// import store from "./store";
+//
+// ReactDOM.createRoot(document.getElementById("root")).render(
+//   <Provider store={store}>
+//     <App />
+//   </Provider>,
+// );
 
-const counterReducer = (state = 0, action) => {
-  switch (action.type) {
-    case "INCREMENT":
-      return state + 1;
-    case "DECREMENT":
-      return state - 1;
-    case "ZERO":
-      return 0;
-    default:
-      return state;
-  }
-};
+import { createRoot } from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const store = createStore(counterReducer);
+import App from "./App";
 
-const App = () => {
-  return (
-    <div>
-      <div>{store.getState()}</div>
-      <button type="button" onClick={store.dispatch({ type: "INCREMENT" })}>
-        plus
-      </button>
-      <button type="button" onClick={store.dispatch({ type: "DECREMENT" })}>
-        minus
-      </button>
-      <button type="button" onClick={store.dispatch({ type: "ZERO" })}>
-        zero
-      </button>
-    </div>
-  );
-};
+const queryClient = new QueryClient();
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-const renderApp = () => {
-  root.render(<App />);
-};
-
-renderApp();
-store.subscribe(renderApp);
+createRoot(document.getElementById("root")).render(
+  <QueryClientProvider client={queryClient}>
+    <App />
+  </QueryClientProvider>,
+);
