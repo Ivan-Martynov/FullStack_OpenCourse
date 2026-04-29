@@ -70,7 +70,8 @@ blogsRouter.put('/:id', userExtractor, async (request, response) => {
     blog.likes = body.likes
   }
 
-  if (!blog.user || !user || blog.user.toString() !== user.id.toString()) {
+  if (!user) {
+    // !blog.user || blog.user.toString() !== user.id.toString()) {
     return response
       .status(403)
       .json({ error: 'Invalid user to update the blog' })
