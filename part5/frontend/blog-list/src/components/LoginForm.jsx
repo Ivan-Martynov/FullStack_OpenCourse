@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import loginService from '../services/login'
 import blogService from '../services/blogs'
 
-const LoginForm = ({ setUser, inform }) => {
+const LoginForm = ({ setUser }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const navigate = useNavigate()
 
   const loggedUserKey = 'loggedBlogAppUser'
   const handleLogin = async (event) => {
@@ -17,18 +19,12 @@ const LoginForm = ({ setUser, inform }) => {
       blogService.setToken(loggedUser.token)
 
       setUser(loggedUser)
+
+      navigate('/')
       setUsername('')
       setPassword('')
-
-      inform({
-        message: `You've logged in as ${loggedUser.name}`,
-        messageClass: 'notification-success',
-      })
     } catch {
-      inform({
-        message: 'wrong username or password',
-        messageClass: 'notification-failure',
-      })
+      console.error('wrong username or password')
     }
   }
 

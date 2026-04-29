@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const NoteForm = ({ createNote: createNote }) => {
   const [newNote, setNewNote] = useState('')
+  const navigate = useNavigate()
 
   const addNote = async (event) => {
     event.preventDefault()
@@ -11,6 +13,7 @@ const NoteForm = ({ createNote: createNote }) => {
       important: true,
     })
 
+    navigate('/notes')
     setNewNote('')
   }
 

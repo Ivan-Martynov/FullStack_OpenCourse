@@ -1,7 +1,13 @@
 import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
-const Blog = ({ blog, updateBlog, removeBlog }) => {
-  const [showDetails, setShowDetails] = useState(false)
+const Blog = ({ blog, updateBlog, removeBlog, user }) => {
+  useParams().id
+  const navigate = useNavigate()
+
+  if (!blog) {
+    return null
+  }
 
   const userCreatedBlog = () => {
     const loggedUserKey = 'loggedBlogAppUser'
@@ -13,17 +19,13 @@ const Blog = ({ blog, updateBlog, removeBlog }) => {
     return false
   }
 
-  const showRemoveButton = userCreatedBlog()
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
-
-  const toggleDetails = () => setShowDetails(!showDetails)
+  // const blogStyle = {
+  //   paddingTop: 10,
+  //   paddingLeft: 2,
+  //   border: 'solid',
+  //   borderWidth: 1,
+  //   marginBottom: 5,
+  // }
 
   const likeBlog = async () => {
     const updatedBlog = { ...blog, likes: blog.likes + 1 }
@@ -36,34 +38,30 @@ const Blog = ({ blog, updateBlog, removeBlog }) => {
     }
 
     await removeBlog(blog)
+    navigate('/')
   }
 
   return (
-    <div style={blogStyle}>
-      <span>
-        {blog.title} {blog.author}
-      </span>
-      <button type="button" onClick={toggleDetails}>
-        {showDetails ? 'hide' : 'view'}
-      </button>
-      {showDetails && (
-        <>
-          <p>{blog.url}</p>
-          <p>
-            likes {blog.likes}
-            <button type="button" onClick={likeBlog}>
-              like
-            </button>{' '}
-          </p>
-          <p>{blog.author}</p>
-          {showRemoveButton && (
-            <button type="button" onClick={deleteBlog}>
-              remove
-            </button>
-          )}
-        </>
+    <article>
+      <h2>{blog.title}</h2>
+      <p>
+        <a href="{blog.url}">{blog.url}</a>
+      </p>
+      <p>
+        likes {blog.likes}
+        {user && (
+          <button type="button" onClick={likeBlog}>
+            like
+          </button>
+        )}
+      </p>
+      <p>Added by {blog.author}</p>
+      {userCreatedBlog() && (
+        <button type="button" onClick={deleteBlog}>
+          remove
+        </button>
       )}
-    </div>
+    </article>
   )
 }
 
