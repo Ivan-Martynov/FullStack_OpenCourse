@@ -62,49 +62,36 @@ describe("Blog app", () => {
       const blogTitle = "test-blog";
 
       beforeEach(async ({ page }) => {
+        await removeBlog(page, blogTitle);
         await createBlog(page, blogTitle, "me", "some.place");
         await expect(page).toHaveURL("/blogs");
         await page
           .getByRole("link", { name: `${blogTitle}` })
           .first()
           .click();
+        await removeBlog(page, blogTitle);
       });
 
       test("can be liked", async ({ page }) => {
-        await createBlog(page, blogTitle, "me", "some.place");
-        await page
-          .getByRole("link", { name: `${blogTitle}` })
-          .first()
-          .click();
+        const t = "to be liked";
+        await createBlog(page, t, "me", "some.place");
+        await page.getByRole("link", { name: t }).first().click();
 
         await expect(page.getByText("likes 0")).toBeVisible();
         await page.getByRole("button", { name: "like" }).click();
         await expect(page.getByText("likes 1")).toBeVisible();
-        await removeBlog(page, blogTitle);
+        await removeBlog(page, t);
       });
 
-      test.skip('button "remove" is visible for the author', async ({
-        page,
-      }) => {
-        await page.getByRole("button", { name: "view" }).click();
+      test("author can delete their blog", async ({ page }) => {
+        const t = "to be deleted";
+        await createBlog(page, t, "me", "gonna-be-out-of-existence");
+        await page.getByRole("link", { name: t }).first().click();
+
         await expect(
           page.getByRole("button", { name: "remove" }),
         ).toBeVisible();
-      });
-
-      test.skip("author can delete a blog", async ({ page }) => {
-        await page.getByRole("button", { name: "view" }).click();
-
-        page.once("dialog", async (dialog) => await dialog.accept());
-        await page.getByRole("button", { name: "remove" }).click();
-
-        await expect(page.getByText("awesome me")).not.toBeVisible();
-      });
-
-      test.skip('button "remove" is hidden from others', async ({ page }) => {
-        await page.getByRole("button", { name: "logout" }).click();
-        await page.getByRole("button", { name: "view" }).click();
-        await expect(page.getByRole("button", { name: "remove" })).toBeHidden();
+        await removeBlog(page, t);
       });
 
       test.skip("blogs ordered in the descending order according to their likes", async ({

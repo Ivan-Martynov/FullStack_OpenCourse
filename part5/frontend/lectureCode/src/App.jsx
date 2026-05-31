@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, Route, Routes, useMatch } from 'react-router-dom'
+import { Container } from '@mui/material'
 
 import noteService from './services/notes'
 import Footer from './components/Footer'
@@ -16,7 +17,6 @@ const App = () => {
   useEffect(() => {
     noteService.getAll().then((initialNotes) => {
       setNotes(initialNotes)
-      console.log(initialNotes)
     })
   }, [])
 
@@ -35,7 +35,6 @@ const App = () => {
     noteService
       .update(id, changedNote)
       .then((returnedNote) => {
-        console.error(returnedNote)
         setNotes(notes.map((note) => (note.id === id ? returnedNote : note)))
       })
       .catch(() => {
@@ -55,36 +54,38 @@ const App = () => {
   const padding = { padding: 5 }
 
   return (
-    <div>
+    <Container>
       <div>
-        <Link style={padding} to="/">
-          home
-        </Link>
-        <Link style={padding} to="/notes">
-          notes
-        </Link>
-        <Link style={padding} to="/create">
-          new note
-        </Link>
+        <div>
+          <Link style={padding} to="/">
+            home
+          </Link>
+          <Link style={padding} to="/notes">
+            notes
+          </Link>
+          <Link style={padding} to="/create">
+            new note
+          </Link>
+        </div>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/notes" element={<NoteList notes={notes} />} />
+          <Route
+            path="/notes/:id"
+            element={
+              <Note
+                note={note}
+                toggleImportance={toggleImportanceOf}
+                deleteNote={deleteNote}
+              />
+            }
+          />
+          <Route path="/create" element={<NoteForm createNote={addNote} />} />
+        </Routes>
+        <Notification message={errorMessage} />
+        <Footer />
       </div>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/notes" element={<NoteList notes={notes} />} />
-        <Route
-          path="/notes/:id"
-          element={
-            <Note
-              note={note}
-              toggleImportance={toggleImportanceOf}
-              deleteNote={deleteNote}
-            />
-          }
-        />
-        <Route path="/create" element={<NoteForm createNote={addNote} />} />
-      </Routes>
-      <Notification message={errorMessage} />
-      <Footer />
-    </div>
+    </Container>
   )
 }
 

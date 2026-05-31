@@ -15,18 +15,19 @@ const createBlog = async (page, title, author, url) => {
 
 const removeBlog = async (page, title) => {
   await page.getByRole("link", { name: "blogs" }).click();
-  for (const _ of await page.getByRole("link", { name: `${title}` }).all()) {
-    await page
-      .getByRole("link", { name: `${title}` })
-      .first()
-      .click();
-    page.once("dialog", async (dialog) => await dialog.accept());
+  await page.waitForURL("**/blogs");
+
+  let links = await page.getByRole("link", { name: title }).all();
+  while (links.length > 0) {
+    await page.getByRole("link", { name: title }).first().click();
+    await page.waitForURL("**/blogs/*");
+
+    page.once("dialog", (dialog) => dialog.accept());
     await page.getByRole("button", { name: "remove" }).click();
-    await page.getByRole("link", { name: "blogs" }).click();
+    await page.waitForURL("**/blogs");
+
+    links = await page.getByRole("link", { name: title }).all();
   }
-  // await page.getByRole("link", { name: `${title}` }).click();
-  // page.once("dialog", async (dialog) => await dialog.accept());
-  // await page.getByRole("button", { name: "remove" }).click();
 };
 
 export { loginWith, createBlog, removeBlog };

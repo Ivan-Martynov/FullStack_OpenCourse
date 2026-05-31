@@ -13,7 +13,8 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
     const loggedUserKey = 'loggedBlogAppUser'
     const loggedUserJSON = window.localStorage.getItem(loggedUserKey)
     if (loggedUserJSON) {
-      const payload = JSON.parse(atob(loggedUserJSON.split('.')[1]))
+      const loggedUser = JSON.parse(loggedUserJSON)
+      const payload = JSON.parse(atob(loggedUser.token.split('.')[1]))
       return blog?.user == payload?.id || blog?.user?.id == payload?.id
     }
     return false
@@ -48,7 +49,7 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
         <a href="{blog.url}">{blog.url}</a>
       </p>
       <p>
-        likes {blog.likes}
+        <span>likes {blog.likes}</span>
         {user && (
           <button type="button" onClick={likeBlog}>
             like

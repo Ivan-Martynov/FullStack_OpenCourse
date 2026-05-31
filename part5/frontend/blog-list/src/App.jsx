@@ -15,6 +15,7 @@ import BlogList from './components/BlogList'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [blogsLoaded, setBlogsLoaded] = useState(false)
 
   const [user, setUser] = useState(null)
   const navigate = useNavigate()
@@ -28,6 +29,7 @@ const App = () => {
     const fetchData = async () => {
       const blogsData = await blogService.getAll()
       setBlogs(blogsData)
+      setBlogsLoaded(true)
     }
     fetchData()
   }, [])
@@ -65,14 +67,12 @@ const App = () => {
   const updateBlog = async (updatedBlog) => {
     try {
       const returnedBlog = await blogService.update(updatedBlog.id, updatedBlog)
-      setBlogs(
-        blogs.map((item) =>
-          item.id === returnedBlog.id ? returnedBlog : item,
-        ),
+      setBlogs((prev) =>
+        prev.map((item) => (item.id === returnedBlog.id ? returnedBlog : item)),
       )
     } catch (error) {
       console.error(error.response?.data?.error || error.message)
-      setBlogs(blogs.filter((item) => item.id !== updatedBlog.id))
+      setBlogs((prev) => prev.filter((item) => item.id !== updatedBlog.id))
     }
   }
 
@@ -114,12 +114,16 @@ const App = () => {
         <Route
           path="/blogs/:id"
           element={
-            <Blog
-              blog={blog}
-              updateBlog={updateBlog}
-              removeBlog={removeBlog}
-              user={user}
-            />
+            blogsLoaded ? (
+              <Blog
+                blog={blog}
+                updateBlog={updateBlog}
+                removeBlog={removeBlog}
+                user={user}
+              />
+            ) : (
+              <p>Loading...</p>
+            )
           }
         />
         <Route path="/create" element={<BlogForm createBlog={addBlog} />} />
